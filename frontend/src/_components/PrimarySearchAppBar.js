@@ -249,7 +249,8 @@ class SearchAppBar extends React.Component {
     
     if(e.keyCode === 13){
       console.log("search button submitted");
-      this.setState({submitted:!this.state.submitted})
+      this.setState({submitted:true})
+      console.log(e.target.value);
     }
   }
 
@@ -334,7 +335,7 @@ class SearchAppBar extends React.Component {
     
     if(this.state.submitted){
       return (
-        <Redirect to="/search" ref={this}/>
+        <Redirect to="/search" {...this.props}/>
       )
     }
     
@@ -381,14 +382,14 @@ class SearchAppBar extends React.Component {
                 <div className={classes.searchIcon}>
                   <SearchIcon />
                 </div>
-                {!this.state.submitted && <InputBase
+                 <InputBase
                   placeholder="type something, hit enter"
                   onKeyUp={this.handleSearch}
                   classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput,
                   }}
-                />}
+                />
               </div>
               <a href="/#/shopping-cart">
                 <IconButton aria-label="Cart">

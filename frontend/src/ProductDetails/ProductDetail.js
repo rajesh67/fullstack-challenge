@@ -440,7 +440,7 @@ class CategoryProducts extends Component {
                           {this.props.products && this.props.products.map(tile => (
                             <GridListTile key={tile.img}>
                               <CardActionArea>
-                              <img src={`/images/product_images/${tile.image}`} alt={tile.title} style={{maxWidth:"100%", margin:"auto auto"}}/>
+                                <img src={`/images/product_images/${tile.image}`} alt={tile.title} style={{maxWidth:"100%", margin:"auto auto"}}/>
                               </CardActionArea>
                               <GridListTileBar
                                 title={tile.title}
