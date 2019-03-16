@@ -3,6 +3,8 @@ import { paymentConstants } from "../_constants/payment.constants";
 const initialState = {
     data : {},
     status : 'REQUESTED',
+    
+    requestedTotal : 0,
 }
 
 export default function(state = initialState, action){

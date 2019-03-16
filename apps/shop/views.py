@@ -35,7 +35,12 @@ from apps.shop.serializers import (
     ShippingSerializer,
     TaxSerializer,
 
-    ShoppingCartSerializer
+    ShoppingCartSerializer,
+    CustomerSerializer,
+    OrderSerializer,
+    OrderDetailSerializer,
+    AuditSerializer,
+    ReviewSerializer
 )
 from apps.shop.models import (
     Department,
@@ -48,7 +53,12 @@ from apps.shop.models import (
     ShippingRegion,
     Shipping,
     Tax,
-    ShoppingCart
+    ShoppingCart,
+    Customer,
+    Order,
+    OrderDetail,
+    Audit,
+    Review
 )
 
 SAFE_METHODS = ["POST", "UPDATE"]
@@ -234,3 +244,53 @@ class ShoppingCartList(generics.ListCreateAPIView):
 class ShoppingCartDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = ShoppingCart.objects.all()
     serializer_class = ShoppingCartSerializer
+
+
+class CustomerList(generics.ListCreateAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+class CustomerDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+class OrderList(generics.ListCreateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+class OrderDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+class OrderDetailsList(generics.ListCreateAPIView):
+    queryset = OrderDetail.objects.all()
+    serializer_class = OrderDetailSerializer
+
+class OrderDetailsView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = OrderDetail.objects.all()
+    serializer_class = OrderDetailSerializer
+
+class AuditList(generics.ListCreateAPIView):
+    queryset = Audit.objects.all()
+    serializer_class = AuditSerializer
+
+class AuditDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Audit.objects.all()
+    serializer_class = AuditSerializer
+
+class ReviewList(generics.ListCreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+class ReviewList(generics.ListCreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+class ReviewDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+
+class CustomerBasicInformtion(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class  = UserSerializer

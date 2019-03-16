@@ -13,7 +13,12 @@ from apps.shop.models import (
     Shipping,
     Tax,
 
-    ShoppingCart
+    ShoppingCart,
+    Customer,
+    Audit,
+    Order,
+    OrderDetail,
+    Review
 
 )
 class UserSerializer(serializers.ModelSerializer):
@@ -102,3 +107,60 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
         cart, created = ShoppingCart.objects.get_or_create(product=product, **validated_data)
         return cart
+    
+    def update(self, instance, validated_data):
+        product_data = validated_data.pop('product')
+        instance.attributes = validated_data.get("attributes", instance.attributes)
+        instance.quantity = validated_data.get("quantity", instance.quantity)
+        instance.save()
+
+        # cart, created = ShoppingCart.objects.get_or_create(product=product, **validated_data)
+        return instance
+
+
+#Customer's serializer
+
+class CustomerSerializer(serializers.ModelSerializer):
+    shipping_region = ShippingRegionSerializer()
+    class Meta:
+        model = Customer
+        fields = (
+                    'id', "user", "address_1", "address_2", 
+                    "city", "region", "postal_code", "country", 
+                    "shipping_region", "day_phone", "eve_phone", "mob_phone"
+                )
+
+#Order Serializer, Order details serializer
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = (
+            "id", "total_amount", "created_on", "shipped_on",
+            "status", "comments", "customer", "auth_code", "reference",
+            "shipping", "tax"
+        )
+
+class OrderDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderDetail
+        fields = (
+            "id", "product", "attributes", "product_name",
+            "quantity", "unit_cost"
+        )
+
+#Audit serializer
+class AuditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Audit
+        fields = (
+            "id", "order", "created_on", "message", "code"
+        )
+
+#Review serializer
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = (
+            "id", "customer", "product", "review", "rating", "created_on"
+        )

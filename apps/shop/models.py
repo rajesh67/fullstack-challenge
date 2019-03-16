@@ -185,3 +185,5 @@ class Review(models.Model):
 
 
 # On every user created , respective customer and token should be created
+
+# On every order created audit should be created.

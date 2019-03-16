@@ -68,7 +68,7 @@ async function updateCartById(id, data){
     const requestOptions = {
         method: 'PUT',
         headers: {"Content-Type":"application/json"},
-        body : headers_data
+        body : JSON.stringify(data)
     };
 
     return await fetch(`http://127.0.0.1:8000/api/1.0/carts/${id}/?format=json`,

@@ -29,6 +29,19 @@ from apps.shop.views import (
     ShoppingCartList,
     ShoppingCartDetails,
 
+    CustomerList,
+    CustomerDetails,
+    CustomerBasicInformtion,
+
+    OrderList,
+    OrderDetails,
+    OrderDetailsList,
+    OrderDetailsView,
+    AuditList,
+    AuditDetails,
+    ReviewList,
+    ReviewDetails,
+
     login,
     register
 )
@@ -41,6 +54,9 @@ urlpatterns = [
     url(r'^login/$', login),
     url(r'^register/$', register),
     url(r'^users/$', UserList.as_view()),
+    # url(r'^customers/$', UserList.as_view()),
+
+
     url(r'^departments/$', DepartmentList.as_view()),
     url(r'^departments/(?P<pk>\d+)/$', DepartmentDetails.as_view()),
     url(r'^categories/$', CategoryList.as_view()),
@@ -70,6 +86,22 @@ urlpatterns = [
 
     url(r'^carts/$', ShoppingCartList.as_view()),
     url(r'^carts/(?P<pk>\d+)/$', ShoppingCartDetails.as_view()),
+
+    url(r'^users/(?P<pk>\d+)$', CustomerBasicInformtion.as_view()),
+    url(r'^customers/$', CustomerList.as_view()),
+    url(r'^customers/(?P<pk>\d+)/$', CustomerDetails.as_view()),
+
+    url(r'^orders/$', OrderList.as_view()),
+    url(r'^orders/(?P<pk>\d+)$', OrderDetails.as_view()),
+
+    url(r'^order-details/$', OrderDetailsList.as_view()),
+    url(r'^order-details/(?P<pk>\d+)$', OrderDetailsView.as_view()),
+    
+    url(r'^audits/$', AuditList.as_view()),
+    url(r'^audits/(?P<pk>\d+)$', AuditDetails.as_view()),
+    
+    url(r'^reviews/$', ReviewList.as_view()),
+    url(r'^reviews/(?P<pk>\d+)$', ReviewDetails.as_view()),
 ]
 
 urlpatterns += router.urls

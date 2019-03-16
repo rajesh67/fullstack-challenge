@@ -212,6 +212,17 @@ class SignUp extends React.Component{
                 >
                     Register
                 </Button>
+                <div style={{margin:"10px auto auto auto", textAlign:"center"}}>
+                  <h5>OR</h5>
+                </div>
+                <Link to="/login" style={{textDecoration:"none", color:"black"}}><Button
+                  // type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="default"
+                >
+                  Log in
+                </Button></Link>
               </form>
             </Paper>
           </main>

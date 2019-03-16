@@ -25,7 +25,7 @@ export default function(state = initialState, action){
             }
         
         case cartConstants.ADD_CART_SUCCESS:
-            localStorage.removeItem('cart');
+            // localStorage.removeItem('cart');
 
             // localStorage.setItem('cart', JSON.stringify([...state.items, action.payload]))
             return {
@@ -56,6 +56,33 @@ export default function(state = initialState, action){
                 ...state
             }
         
+
+        case cartConstants.UPDATE_PRODUCT_REQUEST:
+            return {
+                fetching : true,
+                ...state
+            }
+        
+        case cartConstants.UPDATE_PRODUCT_SUCCESS:
+            state.items.find(el => {
+                if(el.product.id ===action.payload.id){
+                    el = action.payload
+                }
+            })
+            return {
+                item : action.payload,
+                items : [...state.items],
+            }
+        case cartConstants.UPDATE_PRODUCT_FAILURE:
+            return {
+                error : action.payload,
+                ...state
+            }
+
+        case cartConstants.DROP_CART_ITEMS_SUCCESS:
+            return {
+                items : new Array
+            }
         
         default:
             return state;

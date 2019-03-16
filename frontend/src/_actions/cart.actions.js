@@ -6,13 +6,32 @@ function getCarts(){
     return carts;
 }
 
+
+export const getCartsFromStorage = () => dispatch =>{
+    console.log("Getting carts from local storage");
+    const carts = getCarts();
+    if(carts && carts.length !==0){
+        dispatch({
+            type : cartConstants.GET_CART_SUCCESS,
+            payload : carts,
+        })
+    }else{
+        dispatch({
+            type : cartConstants.GET_CART_FAILURE,
+            payload : 'Error getting data from localstorage.'
+        })
+    }
+}
+
+
+
 export const addtoCart = (product) => dispatch =>{
     //Check if the product is already added in
     // one of the cart instances
     // from localstorage
-    var carts = Array(getCarts());
+    var carts = [];
     // let addedItem = state.items.find(item=> item.id === action.id)
-    let existed_item = carts.length > 0  ? null : carts.find(cart => cart.id && cart.product && cart.product.id === product.id);
+    let existed_item = carts.length > 0  ? carts.find(cart => cart.id && cart.product && cart.product.id === product.id) : null;
     console.log("In addToCart ");
     console.log(existed_item)
     //If exists, just increment quantity value in it
@@ -31,8 +50,6 @@ export const addtoCart = (product) => dispatch =>{
         cartService.createCart(data1).then(
             (cart) => {
                 console.log(cart);
-                // Storage.setItem('cart', JSON.stringify(carts));
-    
                 //Update carts in the local cache
                 dispatch(success(cart));
             },
@@ -54,7 +71,7 @@ export const addtoCart = (product) => dispatch =>{
 export const createCart = (data) => dispatch =>{
     console.log("Creating new card : reducer");
 
-    const carts = getCarts();
+    // const carts = getCarts();
 
     dispatch(request());
 
@@ -64,9 +81,9 @@ export const createCart = (data) => dispatch =>{
     cartService.createCart(data).then(
         (cart) => {
             console.log(cart);
-            carts.push(cart);
+            // carts.push(cart);
             //Update localstorage
-            localStorage.setItem('cart', JSON.stringify(carts));
+            // localStorage.setItem('cart', JSON.stringify(carts));
 
             //Update carts in the local cache
             dispatch(success(cart));
@@ -84,12 +101,12 @@ export const createCart = (data) => dispatch =>{
 export const updateCart = (data) => dispatch =>{
     console.log("Creating new card : reducer");
     
-    const carts = getCarts();
-    let existed_item = carts.find(cart => cart.id && cart.product && cart.product.id === data.product.id)
+    // const carts = getCarts();
+    // let existed_item = carts.find(cart => cart.id && cart.product && cart.product.id === data.product.id)
 
     dispatch(request());
 
-    cartService.updateCartById(data.id).then(
+    cartService.updateCartById(data.id, data).then(
         (cart) => {
             console.log(cart);
             dispatch(success(cart));
@@ -121,4 +138,14 @@ export const getCartById = (id) => dispatch =>{
     function request() { return { type: cartConstants.GET_CART_REQUEST } }
     function success(cart) { return { type: cartConstants.GET_CART_SUCCESS, payload : cart} }
     function failure(errorText) { return { type: cartConstants.GET_CART_FAILURE, payload : errorText } }
+}
+
+
+export const removeCartItems = () => dispatch => {
+    console.log("Removing/droping all cart items");
+
+    dispatch({
+        type : cartConstants.DROP_CART_ITEMS_SUCCESS,
+        payload : [],
+    })
 }

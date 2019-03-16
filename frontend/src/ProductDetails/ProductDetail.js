@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Rating from "react-rating";
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
@@ -18,6 +19,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import StarIcon from "@material-ui/icons/Star";
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 // import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 
@@ -30,6 +33,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import Radio from '@material-ui/core/Radio';
+import TextField from "@material-ui/core/TextField";
 
 import ReactDOM from "react-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -93,6 +97,7 @@ const styles = theme => ({
         marginRight: 'auto',
       },
     },
+    
     cardGrid: {
       padding: `${theme.spacing.unit * 8}px 0`,
     },
@@ -133,6 +138,37 @@ const styles = theme => ({
     button: {
         margin: theme.spacing.unit,
         textTransform:'uppercase'
+    },
+    textField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+    },
+
+    commentField: {
+      marginLeft: theme.spacing.unit,
+      marginRight: theme.spacing.unit,
+      width : '50%',
+      height : '250px'
+    },
+
+    rootSimilarProducts: {
+      display: 'inline-flex',
+      flexWrap: 'wrap',
+      justifyContent: 'space-around',
+      overflow: 'hidden',
+      backgroundColor: theme.palette.background.paper,
+    },
+    gridList: {
+      flexWrap: 'nowrap',
+      // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+      transform: 'translateZ(0)',
+    },
+    title: {
+      color: theme.palette.primary.light,
+    },
+    titleBar: {
+      background:
+        'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
     },
 
   });
@@ -329,7 +365,95 @@ class CategoryProducts extends Component {
                             <Grid item xs={2}></Grid>
                         </Grid>}  
                     </div>
-            
+
+                    {/* Product Reviews */}
+                    <div className={classes.layout}>
+                        
+                          <Grid spacing={40}>
+                              {/* Reviews List */}
+                              <Grid item xs={12} sm={12}>
+                                    <h3>Product Reviews</h3>
+                                    <Grid spacing={40}>
+                                        <Grid item xs={3} sm={3}>
+                                        </Grid>
+                                        <Grid item xs={9} sm={9}>
+                                            <Typography>
+                                              Review comments and other buttons goes here
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                              </Grid>
+
+                              {/* Add new review */}
+                              <Grid item xs={12} sm={12}>
+                                {/* <Paper className={classes.paper}> */}
+                                  <h3>Add a review</h3>
+                                  <Grid>
+                                    <form className={classes.container} noValidate autoComplete="off">
+                                        {/* <h4>Your nickname</h4> */}
+                                        <TextField
+                                          id="outlined-name"
+                                          label="Your Name"
+                                          className={classes.textField}
+                                          // value={this.state.name}
+                                          // onChange={this.handleChange('name')}
+                                          margin="normal"
+                                          variant="outlined"
+                                        />
+                                        <br />
+                                        {/* <h4>Your comments</h4> */}
+                                        <TextField
+                                          id="outlined-textarea"
+                                          label="Your comments"
+                                          placeholder="Enter concise descriptive commets.........."
+                                          multiline={true}
+                                          rows={10}
+                                          className={classes.commentField}
+                                          margin="normal"
+                                          variant="outlined"
+                                          size="lg"
+                                          
+                                        />
+                                        <h5>Overall Rating</h5>
+                                        <Rating
+                                            placeholderRating={3.5}
+                                            emptySymbol={<img src="/images/star-grey.png" className="icon" />}
+                                            placeholderSymbol={<img src="/images/star-red.png" className="icon" />}
+                                            fullSymbol={<img src="/images/star-yellow.png" className="icon" />}
+                                          />
+                                        <br />
+                                        <Button variant="contained" color="secondary" className={classes.button}>Add review</Button>
+                                      </form>
+                                  </Grid>
+                                {/* </Paper> */}
+                              </Grid>
+                          </Grid>
+                        {/* </Paper>                     */}
+                    </div>
+
+                    {/* Similar Products Section */}
+                    <h3>You may also like</h3>
+                    <div className={classes.rootSimilarProducts}>
+                      
+                      <GridList className={classes.gridList} cols={6}>
+                                            
+                          {this.props.products && this.props.products.map(tile => (
+                            <GridListTile key={tile.img}>
+                              <CardActionArea>
+                              <img src={`/images/product_images/${tile.image}`} alt={tile.title} style={{maxWidth:"100%", margin:"auto auto"}}/>
+                              </CardActionArea>
+                              <GridListTileBar
+                                title={tile.title}
+                                classes={{
+                                  root: classes.titleBar,
+                                  title: classes.title,
+                                }}
+                                
+                              />
+                            </GridListTile>
+                          ))}
+                        </GridList>
+                    </div>
                 </main>
                 
                 <Footer />
@@ -345,11 +469,13 @@ class CategoryProducts extends Component {
 CategoryProducts.propTypes = {
     getProduct : PropTypes.func.isRequired,
     addtoCart : PropTypes.func.isRequired,
-    product : PropTypes.object.isRequired
+    product : PropTypes.object.isRequired,
+    products : PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
-    product : state.products.item
+    product : state.products.item,
+    products : state.products.items,
 })
 
 export default connect(mapStateToProps, {getProduct, addtoCart})(withStyles(styles)(CategoryProducts));

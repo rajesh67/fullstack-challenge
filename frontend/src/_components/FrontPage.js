@@ -29,7 +29,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 import { getAllProducts, productActions } from "../_actions/product.actions";
 import { getAllCategories } from "../_actions/category.actions";
-import { addtoCart } from "../_actions/cart.actions";
+import { addtoCart, updateCart } from "../_actions/cart.actions";
 
 import DepartmentButtons from "./DepartmentButtons";
 import CategoryButtons from "./CategoryButtons";
@@ -140,7 +140,15 @@ class Album extends React.Component{
     }
 
     handleAddToCart = (product)=>{
-      this.props.addtoCart(product); 
+      var existed_item = this.props.carts.length >=0 ? this.props.carts.filter(cart => cart.product.id === product.id) : null;
+      if(existed_item && existed_item.length >=1){
+        console.log(existed_item);
+        var data = existed_item[0];
+        data["quantity"]=existed_item[0]["quantity"]+1;
+        this.props.updateCart(JSON.stringify(data));
+      }else{
+        this.props.addtoCart(product);
+      }
       console.log("ADd to cart clicked");
       
     }
@@ -291,17 +299,20 @@ class Album extends React.Component{
 
 Album.propTypes = {
   classes: PropTypes.object.isRequired,
+  updateCart : PropTypes.func.isRequired,
   products : PropTypes.array,
   getAllProducts : PropTypes.func.isRequired,
   getAllCategories : PropTypes.func.isRequired,
-  addtoCart : PropTypes.func.isRequired
+  addtoCart : PropTypes.func.isRequired,
+  carts : PropTypes.array.isRequired
 };
 
 const mapStateToProps = state =>({
     products : state.products.items,
+    carts : state.carts.items,
     error : state.products.error,
     loading : state.products.loading,
     categories : state.categories.items
 })
 
-export default connect(mapStateToProps, {getAllProducts, getAllCategories, addtoCart})(withStyles(styles)(Album));
+export default connect(mapStateToProps, {getAllProducts, getAllCategories, addtoCart, updateCart})(withStyles(styles)(Album));

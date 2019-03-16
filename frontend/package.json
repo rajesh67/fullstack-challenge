@@ -41,6 +41,7 @@
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
     "react-async-script-loader": "^0.3.0",
+    "react-rating": "^1.6.2",
     "webpack-cli": "^3.3.0"
   }
 }

@@ -33,7 +33,7 @@ import MediaCard from "../_components/MediaCard";
 import PropTypes from 'prop-types';
 import { connect } from "react-redux";
 import { getCategoryById, getCategoryProducts } from "../_actions/category.actions";
-import { addtoCart } from "../_actions/cart.actions";
+import { addtoCart, updateCart } from "../_actions/cart.actions";
 
 import { Icon } from '@material-ui/core';
 import Filters from "./Filters";
@@ -159,7 +159,19 @@ class CategoryProducts extends Component {
   }
 
   handleAddToCart = (product)=>{
-      this.props.addtoCart(product); 
+      //Check if the product is already present in the carts
+      // var existed_item = this.props.carts.length!==0 ? this.props.carts.
+      //update the cart
+      var existed_item = this.props.carts.length >=0 ? this.props.carts.filter(cart => cart.product.id === product.id) : null;
+      if(existed_item && existed_item.length >=1){
+        console.log(existed_item);
+        var data = existed_item[0];
+        data["quantity"]=existed_item[0]["quantity"]+1;
+        this.props.updateCart(data);
+      }else{
+        this.props.addtoCart(product);
+      }
+       
       console.log("ADd to cart clicked")
   }
 
@@ -269,15 +281,13 @@ class CategoryProducts extends Component {
         <Grid item xs={3} style={{textAlign:'right'}}>
           {/* <Paper className={classes.paper}> */}
             {/* <a href="" className={classes.Links}> */}
-                {this.props.products && this.state.offset+this.props.limit>=this.props.products.length && <Button variant="contained" color="primary" disabled>
-                    Next page
-                </Button>}
-
-                {this.props.products && this.state.offset<this.props.products.length ? <Button variant="contained" color="primary" onClick={(e) =>{
-                    this.handlePageChange(this.state.offset-this.state.limit)
+            <Button variant="contained" color="primary" onClick={(e) =>{
+                    this.handlePageChange(this.state.offset+this.state.limit)
                 }}>
                     Next page
-                </Button> : <div></div>}
+                </Button>
+
+                {/* {this.props.products && this.state.offset<this.props.products.length ?  : <div></div>} */}
             {/* </a> */}
           {/* </Paper> */}
         </Grid>
@@ -309,8 +319,8 @@ class CategoryProducts extends Component {
                         {card.product.description}
                         </Typography>
                         <Typography>
-                          <h5>Price : <s>{card.product.price}</s></h5>
-                          <h5>Discounted Price : {card.product.discounted_price}</h5>
+                          <h5 key="1">Price : <s>{card.product.price}</s></h5>
+                          <h5 key="2">Discounted Price : {card.product.discounted_price}</h5>
                         </Typography>
                     </CardContent>}
                     <CardActions>
@@ -366,12 +376,14 @@ class CategoryProducts extends Component {
 
 
 CategoryProducts.propTypes = {
+    updateCart : PropTypes.func.isRequired,
     getCategoryById : PropTypes.func.isRequired,
     getCategoryProducts : PropTypes.func.isRequired,
     addtoCart : PropTypes.func.isRequired,
     category : PropTypes.object,
     products : PropTypes.array.isRequired,
-    count : PropTypes.object.isRequired
+    count : PropTypes.object.isRequired,
+    carts : PropTypes.array.isRequired
 }
 
 const mapStateToProps = state => ({
@@ -381,7 +393,7 @@ const mapStateToProps = state => ({
     carts : state.carts.items
 })
 
-export default connect(mapStateToProps, {getCategoryById, getCategoryProducts, addtoCart})(withStyles(styles)(CategoryProducts));
+export default connect(mapStateToProps, {getCategoryById, getCategoryProducts, addtoCart, updateCart})(withStyles(styles)(CategoryProducts));
 
 
 // Add Filters as shown in shomate ui kit

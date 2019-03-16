@@ -9,9 +9,25 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
 
 import CommonLayout from "../CommonLayout/CommonLayout";
 import Footer from "../_components/Footer";
+
+function TabContainer(props) {
+  return (
+    <Typography component="div" style={{ padding: 8 * 3 }}>
+      {props.children}
+    </Typography>
+  );
+}
+
+TabContainer.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 const styles = theme => ({
     appBar: {
@@ -44,9 +60,19 @@ const styles = theme => ({
 });
 
 class ProfilePage extends Component {
-  
+
+  constructor(props){
+    super(props);
+    this.state = {
+      value : 0,
+    }
+  }
+  handleChange = (event,value) => {
+    this.setState({value})
+  }
   render() {
     const { classes } = this.props
+    const { value } = this.state;
 
     if(!localStorage.getItem('user')){
         return (
@@ -61,7 +87,7 @@ class ProfilePage extends Component {
                     
                     {/* Cart Details */}
                     <div style={{marginTop:65}}>
-                        <h1>Profile Details Page</h1>
+                        <h1>Profile</h1>
                         {/* <CartProductsTable /> */}
 
                     </div>
@@ -69,20 +95,26 @@ class ProfilePage extends Component {
                     {/* Checkout buttons */}
                     <div style={{marginTop:50}}>
                       <Grid container spacing={40}>
-                        {/* <Grid item xs={12}>
+                        <Grid item xs={12}>
                             <Paper className={classes.paper}>
                           
-                            xs-12
+                            <AppBar position="static" color="default">
+                              <Tabs value={value} onChange={this.handleChange}>
+                                <Tab label="Open orders" />
+                                <Tab label="Completed orders" />
+                                <Tab label="Cancelled orders" />
+                              </Tabs>
+                            </AppBar>
+                            {value === 0 && <TabContainer>Item One</TabContainer>}
+                            {value === 1 && <TabContainer>Item Two</TabContainer>}
+                            {value === 2 && <TabContainer>Item Three</TabContainer>}
                             </Paper>
-                        </Grid> */}
+                        </Grid>
                         <Grid item xs={6}>
                             {/* <Paper className={classes.paper}>
                             </Paper> */}
-                            <a href="/#/" style={{textDecoration:'none'}}>
-                              <Button variant="contained" size="large" color="primary" className={classes.button} style={{display:'block'}}>
-                                Continue shopping 
-                            </Button>
-                            </a>
+                            
+                            
                         </Grid>
                         <Grid item xs={2}> </Grid>
                         
@@ -91,11 +123,7 @@ class ProfilePage extends Component {
                                 
                                 xs-4
                             </Paper> */}
-                            <a href="/#/checkout" style={{textDecoration:'none', textAlign:"right"}}>
-                              <Button variant="contained" size="large" color="primary" className={classes.button} style={{display:'block'}}>
-                                Proceed to checkout 
-                            </Button>
-                            </a>
+                            
                         </Grid>
                         
                     </Grid>
@@ -103,6 +131,7 @@ class ProfilePage extends Component {
                     {/* Footer */}
                     <Footer />
                 </div>
+                
             </div>
 
           

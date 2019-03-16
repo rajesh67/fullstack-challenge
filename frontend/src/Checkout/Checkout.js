@@ -23,6 +23,8 @@ import scriptLoader from 'react-async-script-loader';
 import PaypalExpressBtn from 'react-paypal-express-checkout';
 
 import { onError, onCancel, onSuccess } from "../_actions/payment.actions";
+import { synchronizeUserState } from "../_actions/user.actions";
+import { removeCartItems } from "../_actions/cart.actions";
 
 const styles = theme => ({
   appBar: {
@@ -101,6 +103,23 @@ class Checkout extends React.Component {
   };
 
   render() {
+    // this.props.synchronizeUserState();
+
+    if(this.props.carts.length ===0 ){
+      return (
+        <Redirect to="/shopping-cart"/>
+      )
+    }
+
+    if(!localStorage.getItem('user')){
+      return (
+        <Redirect to="/login"/>
+      )
+    }
+
+    console.log("==== User LoggedIN");
+    console.log(this.props.user);
+
     const { classes, paypal } = this.props;
     const { activeStep } = this.state;
     
@@ -116,6 +135,7 @@ class Checkout extends React.Component {
         // User pressed "cancel" or close Paypal's popup!
         console.log('The payment was cancelled!', data);
         this.props.onCancel(data);
+        // this.props.removeCartItems();
         // You can bind the "data" object's value to your state or props or whatever here, please see below for sample returned data
     }
 
@@ -143,7 +163,10 @@ class Checkout extends React.Component {
     if(this.props.data && this.props.status!=='REQUESTED'){
       // this.handleNext();
       if(activeStep === steps.length - 1){
-        this.handleNext()
+        this.handleNext();
+
+        //remove product from cart
+        
       }
     }
 
@@ -166,11 +189,13 @@ class Checkout extends React.Component {
                 <React.Fragment>
                 {activeStep === steps.length ? (
                     <React.Fragment>
+                      
                     {this.props.data && this.props.status === 'CANCELLED' && <Typography variant="h5" gutterBottom>
                         Sorry we could not process your order.
                         Your order number is #{this.props.data.paymentID}. We have emailed your order confirmation, and will
                         send you an update when your order has shipped.
                     </Typography>
+                    
                   }
                     {this.props.data && this.props.status === 'SUCCESS' && <Typography variant="h5" gutterBottom>
                         Thank you for this order!. Your order number is #{this.props.data.paymentID}. We have emailed your order confirmation, and will
@@ -186,19 +211,24 @@ class Checkout extends React.Component {
                     <React.Fragment>
                     {getStepContent(activeStep)}
                     <div className={classes.buttons}>
+
                         {activeStep !== 0 && (
-                        <Button onClick={activeStep === steps.length -1 ? this.handleBack : null} className={classes.button}>
+                        <Button onClick={activeStep <= steps.length -1 ? this.handleBack : null} className={classes.button}>
                             Back
                         </Button>
                         )}
-                        <Button
+                        {activeStep<=steps.length-2 && <Button
                         variant="contained"
-                        color={activeStep === steps.length-1 ? <PaypalExpressBtn size="lg" env={env} client={client} currency={currency} total={total} onError={onError} onSuccess={onSuccess} onCancel={onCancel} /> : "primary"}
+                        color="primary"
+                        // primary="Next"
                         onClick={this.handleNext}
                         className={classes.button}
                         >
-                        {activeStep === steps.length - 1 ? <PaypalExpressBtn size="lg" env={env} client={client} currency={currency} total={total} onError={onError} onSuccess={onSuccess} onCancel={onCancel} /> : 'Next'}
-                        </Button>
+                        Next
+                        </Button>}
+                        <div style={{ alignItems:'center', paddingTop:"20px", position:"relative",top:"10px"}}>
+                        {activeStep === steps.length - 1 ? <PaypalExpressBtn size="lg" env={env} client={client} currency={currency} total={total} onError={onError} onSuccess={onSuccess} onCancel={onCancel} /> : <div></div>}
+                        </div>
                     </div>
                     </React.Fragment>
                 )}
@@ -215,17 +245,25 @@ Checkout.propTypes = {
   onCancel : PropTypes.func.isRequired,
   onSuccess : PropTypes.func.isRequired,
   onError : PropTypes.func.isRequired,
+  synchronizeUserState : PropTypes.func.isRequired,
+  removeCartItems : PropTypes.func.isRequired,
 
   classes: PropTypes.object.isRequired,
   data : PropTypes.object.isRequired,
-  status : PropTypes.object.isRequired
+  status : PropTypes.object.isRequired,
+
+  user : PropTypes.object.isRequired,
+  carts : PropTypes.array.isRequired
 };
 
 const mapStateToProps = state =>({
   data : state.payment.data,
   status : state.payment.status,
+  user : state.users.item,
+
+  carts : state.carts.items
 })
 
 
 // export default scriptLoader('https://www.paypalobjects.com/api/checkout.js')(withStyles(styles)(Checkout));
-export default connect(mapStateToProps, {onCancel, onError, onSuccess})(withStyles(styles)(Checkout));
+export default connect(mapStateToProps, {onCancel, onError, onSuccess, synchronizeUserState, removeCartItems})(withStyles(styles)(Checkout));

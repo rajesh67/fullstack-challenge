@@ -49,3 +49,19 @@ export const onCancel = (data) => dispatch => {
     // );
     dispatch( { type: paymentConstants.PAYMENT_CANCEL, payload : data} );
 }
+
+
+export const getPaymentRequest = (data) => dispatch => {
+    console.log("Payment request");
+
+}
+
+
+export const createPaymentRequest = (total) => dispatch => {
+    console.log("Creating payment request");
+
+    dispatch({
+        type : paymentConstants.CREATE_PAYMENT_SUCCESS,
+        payload : total
+    })
+}

@@ -93,11 +93,16 @@ class CartPage extends Component {
                                 
                                 xs-4
                             </Paper> */}
-                            <a href="/#/checkout" style={{textDecoration:'none', textAlign:"right", alignItems:"right", float:"right"}}>
+                            {this.props.carts.length !==0 && <a href="/#/checkout" style={{textDecoration:'none', textAlign:"right", alignItems:"right", float:"right"}}>
                               <Button variant="contained" size="large" color="primary" className={classes.button} style={{display:'block'}}>
                                   Proceed to checkout 
                                 </Button>
-                            </a>
+                            </a>}
+                            {this.props.carts.length ===0 && <a  style={{textDecoration:'none', textAlign:"right", alignItems:"right", float:"right"}}>
+                              <Button variant="contained" size="large" color="primary" className={classes.button} style={{display:'block'}} disabled>
+                                  Proceed to checkout 
+                                </Button>
+                            </a>}
                         </Grid>
                         
                     </Grid>

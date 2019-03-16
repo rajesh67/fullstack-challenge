@@ -155,6 +155,11 @@ const styles = theme => ({
     // color : 'black',
     fontWeight : 'bold',
     color : 'black'
+  },
+  homeLink : {
+    textDecoration : 'none',
+    color : 'white',
+    fontWeight : 'bold',
   }
 });
 
@@ -357,7 +362,7 @@ class SearchAppBar extends React.Component {
                 </SwipeableDrawer>
               </IconButton>
               <Typography className={classes.title} variant="h6" color="inherit" noWrap>
-                <Link to="/" className={classes.Link}>Shopemate</Link>
+                <Link to="/" className={classes.homeLink}>Shopemate</Link>
               </Typography>
               <div className={classes.grow} >
                 {/* <Tabs value={value} onChange={this.handleChange}>

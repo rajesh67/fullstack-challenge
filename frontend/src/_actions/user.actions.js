@@ -32,6 +32,22 @@ export const registerUser = (data) => dispatch => {
     // function alertFailure(error) { return { type : alertConstants.SUCCESS, payload : error} }
 }
 
+
+export const synchronizeUserState = () => dispatch =>{
+    console.log("Synchronizing user's login state");
+    const user = localStorage.getItem('user');
+    if( user ){
+        return {
+            type : usersConstants.LOGIN_SUCCESS,
+            payload : JSON.parse(user)
+        }
+    }
+    return {
+        type : usersConstants.REGISTER_FAILURE,
+        payload : "No user session found"
+    }
+}
+
 export const loginUser = (data) => dispatch => {
     console.log("Logging in to the database !!!");
 
