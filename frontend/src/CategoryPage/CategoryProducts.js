@@ -129,7 +129,8 @@ class CategoryProducts extends Component {
         this.state={
             offset:0,
             limit : 10,
-            catId : 1
+            catId : 1,
+            products : [],
         }
     }
 
@@ -139,10 +140,11 @@ class CategoryProducts extends Component {
     // }
 
     handlePageChange(offset) {
-        this.setState({ offset });
+        console.log(offset);
+        this.setState({ offset : offset});
         //fetch products
-        this.props.getCategoryById(this.state.catId)
-        this.props.getCategoryProducts(this.state.catId, this.state.limit, this.state.offset)
+        // this.props.getCategoryById(this.state.catId)
+        this.props.getCategoryProducts(this.state.catId, this.state.limit, offset)
         // this.render()
         console.log(offset)
       }
@@ -153,7 +155,7 @@ class CategoryProducts extends Component {
       this.props.getCategoryById(id);  
       this.props.getCategoryProducts(id, this.state.limit, this.state.offset);
 
-      console.log("category id : "+id);
+      console.log("CAtegory")
   }
 
   handleAddToCart = (product)=>{
@@ -168,6 +170,9 @@ class CategoryProducts extends Component {
 
     console.log(this.props.carts);
     console.log(localStorage.getItem('cart'));
+
+    const products = this.props.products;
+
     return (
       <React.Fragment>
           
@@ -264,24 +269,28 @@ class CategoryProducts extends Component {
         <Grid item xs={3} style={{textAlign:'right'}}>
           {/* <Paper className={classes.paper}> */}
             {/* <a href="" className={classes.Links}> */}
-                <Button variant="contained" color="primary" onClick={(e) =>{
-                    this.handlePageChange(this.state.offset+this.state.limit)
+                {this.props.products && this.state.offset+this.props.limit>=this.props.products.length && <Button variant="contained" color="primary" disabled>
+                    Next page
+                </Button>}
+
+                {this.props.products && this.state.offset<this.props.products.length ? <Button variant="contained" color="primary" onClick={(e) =>{
+                    this.handlePageChange(this.state.offset-this.state.limit)
                 }}>
                     Next page
-                </Button>
+                </Button> : <div></div>}
             {/* </a> */}
           {/* </Paper> */}
         </Grid>
 
-        <Grid item xs= {3} style={{textAlign:'left'}}>
+        <Grid item xs={3} style={{textAlign:'left'}}>
                 <h1>Filters</h1>
         </Grid>
 
-        <Grid item xs={9} >
+        <Grid item xs={9} style={{textAlign:"center"}}>
         
         {/* Products List Page */}
         <Grid container spacing={40}>
-                {this.props.products && this.props.products.map(card => (
+                {products && products.map(card => (
                 <Grid item key={card.id} sm={6} md={4} lg={4}>
                     
                     <Card className={classes.card}>
@@ -361,12 +370,14 @@ CategoryProducts.propTypes = {
     getCategoryProducts : PropTypes.func.isRequired,
     addtoCart : PropTypes.func.isRequired,
     category : PropTypes.object,
-    products : PropTypes.array
+    products : PropTypes.array.isRequired,
+    count : PropTypes.object.isRequired
 }
 
 const mapStateToProps = state => ({
     category : state.categories.item,
-    products : state.categories.items,
+    products : state.categories.products,
+    count : state.categories.count,
     carts : state.carts.items
 })
 

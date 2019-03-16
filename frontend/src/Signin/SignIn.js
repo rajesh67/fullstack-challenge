@@ -61,7 +61,9 @@ class SignIn extends React.Component{
       this.state = {
         username : '',
         password : '',
-        loggedIn : false
+        loggedIn : false,
+        error : '',
+        open : true,
       }
       this.handleFormChange = this.handleFormChange.bind(this);
       this.handleFormSubmit = this.handleFormSubmit.bind(this);
@@ -81,31 +83,46 @@ class SignIn extends React.Component{
         "password":this.state.password
       });
       // this.props.location.reload(true)
-      this.setState({loggedIn:true})
+      if(this.props.user && this.props.user.error){
+        this.setState({loggedIn:false, error : this.props.user.error, open:true})
+        
+      }else{
+        this.setState({loggedIn:true, error : '', open:true})
+      }
+      
     }
 
     handleClose = () => {
-      this.setState({ open: false });
+      this.setState({ open: !this.state.open });
     };
 
     render() {
         const { classes } = this.props;
         console.log(this.props.user)
         
-        if(localStorage.getItem('user')){
-            return (
-                <Redirect to="/"/>
-            )
+        // console.log(this.props.user)
+        var error = '';
+        if(this.props.user && this.props.user.error){
+          error=this.props.user.error
+          // alert(error)
+        }
+
+        if(this.props.user && this.props.user.token){
+          // console.log(this.props.user)
+          localStorage.setItem('user', JSON.stringify(this.props.user));
+          return (
+            <Redirect to="/"/>
+          )
         }
 
         return (
           <main className={classes.main}>
             <CssBaseline />
-            {this.props.alertMessage && <Snackbar
-          key={this.props.alertMessage}
+            { error && <Snackbar
+          key={error}
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+            vertical: 'top',
+            horizontal: 'center',
           }}
           open={this.state.open}
           autoHideDuration={6000}
@@ -114,11 +131,11 @@ class SignIn extends React.Component{
           ContentProps={{
             'aria-describedby': 'message-id',
           }}
-          message={<span id="message-id">{this.props.alertMessage}</span>}
+          message={<span id="message-id">{error}</span>}
           action={[
-            <Button key="undo" color="secondary" size="small" onClick={this.handleClose}>
-              UNDO
-            </Button>,
+            // <Button key="undo" color="secondary" size="small" onClick={this.handleClose}>
+            //   UNDO
+            // </Button>,
             <IconButton
               key="close"
               aria-label="Close"
@@ -171,15 +188,15 @@ class SignIn extends React.Component{
 SignIn.propTypes = {
   classes: PropTypes.object.isRequired,
   loginUser : PropTypes.func.isRequired,
-  user : PropTypes.object,
-  alertMessage : PropTypes.object
+  user : PropTypes.object.isRequired,
+  alertMessage : PropTypes.object.isRequired
 };
 
 
 const mapStateToProps = state => ({
   user : state.users.item,
-  alertMessage : state.alers.message
+  // alertMessage : state.alers.message
 })
 
 
-export default connect(null, {loginUser, })(withStyles(styles)(SignIn));
+export default connect(mapStateToProps, {loginUser, })(withStyles(styles)(SignIn));

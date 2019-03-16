@@ -37,7 +37,13 @@ async function getCategoryProductList(id, limit, offset){
         headers: authHeader()
     };
 
-    return await fetch(`http://localhost:8000/api/1.0/product-categories/?category=${id}&limit=${limit}&offset=${offset}&format=json`,
-        requestOptions
-    ).then(res => res.json());
+    if(offset==0){
+        return await fetch(`http://localhost:8000/api/1.0/product-categories/?category=${id}&format=json`,
+            requestOptions
+        ).then(res => res.json());    
+    }else{
+        return await fetch(`http://localhost:8000/api/1.0/product-categories/?category=${id}&offset=${offset}&format=json`,
+            requestOptions
+        ).then(res => res.json());
+    }
 }

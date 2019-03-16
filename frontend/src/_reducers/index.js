@@ -6,6 +6,7 @@ import CategoryReducer from "./category.reducers";
 import DepartmentReducer from "./department.reducers";
 import UserReducer from './user.reducers';
 import CartReducer from './cart.reducers';
+import PaymentReducer from "./payment.reducers";
 
 export default combineReducers({
     alerts : AlertReducer,
@@ -13,5 +14,6 @@ export default combineReducers({
     categories : CategoryReducer,
     departments : DepartmentReducer,
     users : UserReducer,
-    carts : CartReducer
+    carts : CartReducer,
+    payment : PaymentReducer
 });

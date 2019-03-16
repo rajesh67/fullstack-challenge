@@ -6,6 +6,7 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import TextField from "@material-ui/core/TextField";
 
 const styles = theme => ({
   root: {
@@ -21,17 +22,19 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ['Select master blaster campaign settings', 'Create an ad group', 'Create an ad'];
+  return ['Delivery', 'Confirmation', 'Payment', 'Finish'];
 }
 
 function getStepContent(stepIndex) {
   switch (stepIndex) {
     case 0:
-      return 'Select campaign settings...';
+      return 'Delivery address & options';
     case 1:
-      return 'What is an ad group anyways?';
+      return 'Order summery';
     case 2:
-      return 'This is the bit I really care about!';
+      return 'Choose payment';
+    case 3:
+      return 'Payment confirmation'
     default:
       return 'Unknown stepIndex';
   }
@@ -82,18 +85,24 @@ class HorizontalLabelPositionBelowStepper extends React.Component {
             </div>
           ) : (
             <div>
-              <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+              
               <div>
-                <Button
-                  disabled={activeStep === 0}
-                  onClick={this.handleBack}
-                  className={classes.backButton}
-                >
-                  Back
-                </Button>
-                <Button variant="contained" color="primary" onClick={this.handleNext}>
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                </Button>
+                <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+                <div className="formsContent">
+                    {activeStep === 0 && <ShippingAddress {...this.props}/>}
+                </div>
+                <div>
+                  <Button
+                    disabled={activeStep === 0}
+                    onClick={this.handleBack}
+                    className={classes.backButton}
+                  >
+                    Back
+                  </Button>
+                  <Button variant="contained" color="primary" onClick={this.handleNext}>
+                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -106,5 +115,50 @@ class HorizontalLabelPositionBelowStepper extends React.Component {
 HorizontalLabelPositionBelowStepper.propTypes = {
   classes: PropTypes.object,
 };
+
+
+
+class ShippingAddress extends React.Component{
+  constructor(props){
+    super(props);
+  }
+
+  render(){
+    console.log("Rendering Shipping Address & Shipping type");
+    const { classes } = this.props;
+    return (
+      <React.Fragment>
+        <div className={classes.root}>
+            <div className={classes.layout}>
+              <h1>Enter Shipping address</h1>
+              <div className="content">
+                <TextField
+                  id="outlined-email-input"
+                  label="Email"
+                  className={classes.textField}
+                  type="email"
+                  name="email"
+                  autoComplete="email"
+                  margin="normal"
+                  variant="outlined"
+                />
+
+                <TextField
+                  id="outlined-password-input"
+                  label="Password"
+                  className={classes.textField}
+                  type="password"
+                  autoComplete="current-password"
+                  margin="normal"
+                  variant="outlined"
+                />
+              </div>
+              
+            </div>
+        </div>
+      </React.Fragment>
+    )
+  }
+}
 
 export default withStyles(styles)(HorizontalLabelPositionBelowStepper);

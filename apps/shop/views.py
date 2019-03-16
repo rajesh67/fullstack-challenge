@@ -53,6 +53,10 @@ from apps.shop.models import (
 
 SAFE_METHODS = ["POST", "UPDATE"]
 
+
+def home(request):
+    return render(request,template_name="index.html",context={})
+
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
@@ -151,7 +155,7 @@ class ProductList(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = (filters.SearchFilter, filters.OrderingFilter)
-    search_fields = ('name',)
+    search_fields = ('name', 'description')
     ordering_fields = ('name', 'price', 'discounted_price')
 
 class ProductDetails(generics.RetrieveUpdateAPIView):
@@ -161,8 +165,10 @@ class ProductDetails(generics.RetrieveUpdateAPIView):
 class ProductCategoryList(generics.ListCreateAPIView):
     queryset = ProductCategory.objects.all()
     serializer_class = ProductCategorySerializer
-    filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('category', )
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter)
+    filterset_fields = ('category', 'category__department_id' )
+    search_fields = ('product__name', 'product__description')
+    ordering_fields = ('product__name', 'product__price', 'product__discounted_price')
     
 
 class ProductCategoryDetails(generics.RetrieveUpdateAPIView):
@@ -188,6 +194,9 @@ class AttributeValueDetails(generics.RetrieveUpdateAPIView):
 class ProductAttributeList(generics.ListCreateAPIView):
     queryset = ProductAttribute.objects.all()
     serializer_class = ProductAttributeSerializer
+    filter_backend = (DjangoFilterBackend,)
+    filterset_fields = ('product', 'attributevalue__attribute')
+
 
 class ProductAttributeDetails(generics.RetrieveUpdateAPIView):
     queryset = ProductAttribute.objects.all()

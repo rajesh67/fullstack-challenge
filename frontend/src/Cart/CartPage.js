@@ -43,6 +43,12 @@ const styles = theme => ({
           marginRight: 'auto',
         },
       },
+
+      checkoutLink:{
+        alignItems:"right",
+        textAlign:"right",
+        float : "right"
+      }
 });
 
 class CartPage extends Component {
@@ -71,7 +77,7 @@ class CartPage extends Component {
                             xs-12
                             </Paper>
                         </Grid> */}
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             {/* <Paper className={classes.paper}>
                             </Paper> */}
                             <a href="/#/" style={{textDecoration:'none'}}>
@@ -80,23 +86,20 @@ class CartPage extends Component {
                                 </Button>
                             </a>
                         </Grid>
-                        <Grid item xs={4}>
+                        {/* <Grid item xs={2}> </Grid> */}
+                        
+                        <Grid item xs={6}>
                             {/* <Paper className={classes.paper}>
                                 
                                 xs-4
                             </Paper> */}
-                        </Grid>
-                        <Grid item xs={4}>
-                            {/* <Paper className={classes.paper}>
-                                
-                                xs-4
-                            </Paper> */}
-                            <a href="/#/checkout" style={{textDecoration:'none'}}>
+                            <a href="/#/checkout" style={{textDecoration:'none', textAlign:"right", alignItems:"right", float:"right"}}>
                               <Button variant="contained" size="large" color="primary" className={classes.button} style={{display:'block'}}>
                                   Proceed to checkout 
                                 </Button>
                             </a>
                         </Grid>
+                        
                     </Grid>
                     </div>
                     {/* Footer */}

@@ -70,6 +70,7 @@ class AttributeValueSerializer(serializers.ModelSerializer):
         fields = ("id", "value", "attribute")
 
 class ProductAttributeSerializer(serializers.ModelSerializer):
+    attributevalue = AttributeValueSerializer(read_only=True)
     class Meta:
         model = ProductAttribute
         fields = ("id", "product", "attributevalue")

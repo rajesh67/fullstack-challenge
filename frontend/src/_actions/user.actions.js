@@ -40,7 +40,7 @@ export const loginUser = (data) => dispatch => {
     userService.loginUser(data).then(
         (user) => {
             //set user cookies
-            localStorage.setItem('user', JSON.stringify(user))
+            // localStorage.setItem('user', JSON.stringify(user))
             
             console.log(user);
             dispatch(alertActions.success("User logged in successfully"));

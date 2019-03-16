@@ -1,91 +1,231 @@
-import React, { Component } from 'react'
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import classNames from 'classnames';
 
-import { withStyles } from '@material-ui/core/styles';
-
-
-import Grid from '@material-ui/core/Grid';
+import withStyles from '@material-ui/core/styles/withStyles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 import Paper from '@material-ui/core/Paper';
+import Stepper from '@material-ui/core/Stepper';
+import Step from '@material-ui/core/Step';
+import StepLabel from '@material-ui/core/StepLabel';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import AddressForm from './AddressForm';
+import PaymentForm from './PaymentForm';
+import Review from './Review';
 
+import CommonLayout, {  } from "../CommonLayout/CommonLayout";
+// import PaypalExpressBtn from "./PaypalButton";
+import scriptLoader from 'react-async-script-loader';
+import PaypalExpressBtn from 'react-paypal-express-checkout';
 
-import CommonLayout from "../CommonLayout/CommonLayout";
-import HorizontalLabelPositionBelowStepper from "../_components/HorizontalLabelPositionBelowStepper";
-import Footer from "../_components/Footer";
+import { onError, onCancel, onSuccess } from "../_actions/payment.actions";
 
 const styles = theme => ({
   appBar: {
     position: 'relative',
   },
-  root: {
-      width: '100%',
-      
-      flexGrow: 1,
-      marginTop : 85,
-      backgroundColor: theme.palette.background.paper,
+  layout: {
+    width: 'auto',
+    marginTop:85,
+    marginLeft: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2,
+    [theme.breakpoints.up(600 + theme.spacing.unit * 2 * 2)]: {
+      width: 600,
+      marginLeft: 'auto',
+      marginRight: 'auto',
     },
-    nested: {
-      paddingLeft: theme.spacing.unit * 4,
+  },
+  paper: {
+    marginTop: theme.spacing.unit * 3,
+    marginBottom: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 2,
+    [theme.breakpoints.up(600 + theme.spacing.unit * 3 * 2)]: {
+      marginTop: theme.spacing.unit * 6,
+      marginBottom: theme.spacing.unit * 6,
+      padding: theme.spacing.unit * 3,
     },
-    button: {
-      margin: theme.spacing.unit,
-      display : 'block'
-    },
-    layout: {
-      width: 'auto',
-      marginLeft: theme.spacing.unit * 3,
-      marginRight: theme.spacing.unit * 3,
-      [theme.breakpoints.up(1100 + theme.spacing.unit * 3 * 2)]: {
-        width: 1100,
-        marginLeft: 'auto',
-        marginRight: 'auto',
-      },
-    },
+  },
+  stepper: {
+    padding: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 5}px`,
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  button: {
+    marginTop: theme.spacing.unit * 3,
+    marginLeft: theme.spacing.unit,
+  },
 });
 
-class Checkout extends Component {
-  render() {
-    const { classes } = this.props;
-    
-    return (
-      <CommonLayout>
-          <div style={{marginTop:75}}>
-            
-            <div className={classes.root}>
-                <div className={classNames( classes.layout)}>
-                  <div style={{marginTop:50}}>
-                    <h1>Checkout Page</h1>
-                    <Grid container spacing={40}>
-                      <Grid item xs={12}>
-                          <Paper className={classes.paper} style={{height:'500px'}}>
-                              <HorizontalLabelPositionBelowStepper />
-                          </Paper>
-                      </Grid>
-                      <Grid item xs={4}>
-                          {/* <Paper className={classes.paper}>
-                              
-                            
-                          </Paper> */}
-                      </Grid>
-                      <Grid item xs={4}>
-                          {/* <Paper className={classes.paper}>
-                              
-                              xs-4
-                          </Paper> */}
-                      </Grid>
-                    </Grid>
-                  </div>
+const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
-                  {/* Footer */}
-                <Footer />
-                </div> 
-                {/* /Layout End */}
-          </div> 
-          </div>
-      </CommonLayout>
-    )
+function getStepContent(step) {
+  switch (step) {
+    case 0:
+      return <AddressForm />;
+    case 1:
+      return <PaymentForm />;
+    case 2:
+      return <Review />;
+    default:
+      throw new Error('Unknown step');
   }
 }
 
-export default connect(null, {})(withStyles(styles)(Checkout));
+class Checkout extends React.Component {
+  state = {
+    activeStep: 0,
+  };
+
+  handleNext = () => {
+    this.setState(state => ({
+      activeStep: state.activeStep + 1,
+    }));
+  };
+
+  handleBack = () => {
+    this.setState(state => ({
+      activeStep: state.activeStep - 1,
+    }));
+  };
+
+  handleReset = () => {
+    this.setState({
+      activeStep: 0,
+    });
+  };
+
+  render() {
+    const { classes, paypal } = this.props;
+    const { activeStep } = this.state;
+    
+    // console.log(paypal)
+    const onSuccess = (payment) => {
+        // Congratulation, it came here means everything's fine!
+                console.log("The payment was succeeded!", payment);
+                this.props.onSuccess(payment);
+                // You can bind the "payment" object's value to your state or props or whatever here, please see below for sample returned data
+    }
+
+    const onCancel = (data) => {
+        // User pressed "cancel" or close Paypal's popup!
+        console.log('The payment was cancelled!', data);
+        this.props.onCancel(data);
+        // You can bind the "data" object's value to your state or props or whatever here, please see below for sample returned data
+    }
+
+    const onError = (err) => {
+        // The main Paypal's script cannot be loaded or somethings block the loading of that script!
+        console.log("Error!", err);
+        this.props.onError(err);
+        // Because the Paypal's main script is loaded asynchronously from "https://www.paypalobjects.com/api/checkout.js"
+        // => sometimes it may take about 0.5 second for everything to get set, or for the button to appear
+    }
+
+    let env = 'sandbox'; // you can set here to 'production' for production
+    let currency = 'USD'; // or you can set this value from your props or state
+    let total = 1; // same as above, this is the total amount (based on currency) to be paid by using Paypal express checkout
+    // Document on Paypal's currency code: https://developer.paypal.com/docs/classic/api/currency_codes/
+
+    const client = {
+        sandbox:    'AR8fXEL-HwcbzERJ7qoqnnXnszi2LmSG-8-ugm7uzPpyi2xO3QB4DMf4mLhS5fXqcxOR3XyGJUXEEwIt',
+        production: 'YOUR-PRODUCTION-APP-ID',
+    }; // same as above, this is the total amount (based on currency) to be paid by using Paypal express checkout
+
+    console.log("=========================Payment Details ====================")
+    console.log(this.props.data);
+    console.log(this.props.status);
+    if(this.props.data && this.props.status!=='REQUESTED'){
+      // this.handleNext();
+      if(activeStep === steps.length - 1){
+        this.handleNext()
+      }
+    }
+
+    return (
+      <React.Fragment>
+        
+        <CommonLayout >
+            <main className={classes.layout}>
+            <Paper className={classes.paper}>
+                <Typography component="h1" variant="h4" align="center">
+                Checkout
+                </Typography>
+                <Stepper activeStep={activeStep} className={classes.stepper}>
+                {steps.map(label => (
+                    <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                    </Step>
+                ))}
+                </Stepper>
+                <React.Fragment>
+                {activeStep === steps.length ? (
+                    <React.Fragment>
+                    {this.props.data && this.props.status === 'CANCELLED' && <Typography variant="h5" gutterBottom>
+                        Sorry we could not process your order.
+                        Your order number is #{this.props.data.paymentID}. We have emailed your order confirmation, and will
+                        send you an update when your order has shipped.
+                    </Typography>
+                  }
+                    {this.props.data && this.props.status === 'SUCCESS' && <Typography variant="h5" gutterBottom>
+                        Thank you for this order!. Your order number is #{this.props.data.paymentID}. We have emailed your order confirmation, and will
+                      send you an update when your order has shipped.
+                    </Typography>}
+                    
+                    {this.props.data && this.props.status === 'FAILURE' && <Typography variant="h5" gutterBottom>
+                        Sorry, Something went wrong while processing your payment.
+                    </Typography>}
+                    
+                    </React.Fragment>
+                ) : (
+                    <React.Fragment>
+                    {getStepContent(activeStep)}
+                    <div className={classes.buttons}>
+                        {activeStep !== 0 && (
+                        <Button onClick={activeStep === steps.length -1 ? this.handleBack : null} className={classes.button}>
+                            Back
+                        </Button>
+                        )}
+                        <Button
+                        variant="contained"
+                        color={activeStep === steps.length-1 ? <PaypalExpressBtn size="lg" env={env} client={client} currency={currency} total={total} onError={onError} onSuccess={onSuccess} onCancel={onCancel} /> : "primary"}
+                        onClick={this.handleNext}
+                        className={classes.button}
+                        >
+                        {activeStep === steps.length - 1 ? <PaypalExpressBtn size="lg" env={env} client={client} currency={currency} total={total} onError={onError} onSuccess={onSuccess} onCancel={onCancel} /> : 'Next'}
+                        </Button>
+                    </div>
+                    </React.Fragment>
+                )}
+                </React.Fragment>
+            </Paper>
+            </main>
+        </CommonLayout>
+      </React.Fragment>
+    );
+  }
+}
+
+Checkout.propTypes = {
+  onCancel : PropTypes.func.isRequired,
+  onSuccess : PropTypes.func.isRequired,
+  onError : PropTypes.func.isRequired,
+
+  classes: PropTypes.object.isRequired,
+  data : PropTypes.object.isRequired,
+  status : PropTypes.object.isRequired
+};
+
+const mapStateToProps = state =>({
+  data : state.payment.data,
+  status : state.payment.status,
+})
+
+
+// export default scriptLoader('https://www.paypalobjects.com/api/checkout.js')(withStyles(styles)(Checkout));
+export default connect(mapStateToProps, {onCancel, onError, onSuccess})(withStyles(styles)(Checkout));

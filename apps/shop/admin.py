@@ -46,7 +46,7 @@ class ProductAdmin(admin.ModelAdmin):
 class ProductCategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "product", "category")
     list_display_links = ("id", "product", "category")
-    list_filter = ("id","product__name", "category__name")
+    list_filter = ( "category__name",)
 
 class AttributeValueInline(admin.StackedInline):
     model = AttributeValue

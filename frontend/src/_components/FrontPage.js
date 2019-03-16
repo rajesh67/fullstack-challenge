@@ -50,7 +50,7 @@ const styles = theme => ({
   heroContent: {
     margin: '0 auto',
     padding: `${theme.spacing.unit * 30}px 0 ${theme.spacing.unit * 25}px`,
-    backgroundImage : 'url(https://thumbs.dreamstime.com/b/shopping-woman-holding-red-bag-black-friday-holiday-beautiful-young-make-girl-dark-background-104350636.jpg)',
+    backgroundImage : 'url(/images/cover.jpg)',
     backgroundRepeat : 'none',
     backgroundSize : 'cover',
   },
@@ -174,7 +174,7 @@ class Album extends React.Component{
                     </a>
                     </Grid>
                     <Grid item>
-                    <a href="/#/signup" className={classes.Links}>
+                    <a href="/#/signup" className={classes.Links, classes.heroButtons}>
                       <Button variant="outlined" color="primary">
                           Signup
                       </Button>

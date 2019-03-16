@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from "react-redux";
+import { Link, Redirect } from "react-router-dom";
+
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -18,6 +20,7 @@ import Tab from '@material-ui/core/Tab';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import HomeIcon from "@material-ui/icons/Home";
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
@@ -27,6 +30,13 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
+import Collapse from '@material-ui/core/Collapse';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import StarBorder from '@material-ui/icons/StarBorder';
+import ListSubheader from '@material-ui/core/ListSubheader';
 
 
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -43,6 +53,9 @@ import HorizontalLabelPositionBelowStepper from "./HorizontalLabelPositionBelowS
 import { userService } from "../_services/user.service";
 
 import { getAllCategories } from "../_actions/category.actions";
+import { getAllDepartments } from "../_actions/department.actions";
+
+import { history } from "../_helpers/history";
 
 function TabContainer(props) {
   return (
@@ -137,11 +150,18 @@ const styles = theme => ({
       theme.palette.type === 'light' ? theme.palette.grey[200] : theme.palette.grey[900]
     }`,
   },
+  Link : {
+    textDecoration : 'none',
+    // color : 'black',
+    fontWeight : 'bold',
+    color : 'black'
+  }
 });
 
 class SearchAppBar extends React.Component {
   componentWillMount(){
-    // this.props.getAllCategories
+    this.props.getAllCategories();
+    this.props.getAllDepartments();
   }
   constructor(props){
     super(props);
@@ -151,6 +171,9 @@ class SearchAppBar extends React.Component {
       open : false,
       auth : false,
       anchorEl: null,
+
+      accountsOpen : true,
+      submitted : false
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleMenu = this.handleMenu.bind(this);
@@ -161,8 +184,13 @@ class SearchAppBar extends React.Component {
 
   componentDidMount(){
     if(localStorage.getItem('user')){
-      this.setState({auth:true})
+      this.setState({auth:true, submitted : false})
     }
+
+  }
+
+  handleAccountOpenClick = () =>{
+    this.setState({accountsOpen:!this.state.accountsOpen})
   }
 
   handleChange = event => {
@@ -212,39 +240,98 @@ class SearchAppBar extends React.Component {
     this.setState({ open: false });
   };
 
-  render(){
-    const { classes } = this.props;
-      const { value, auth } = this.state;
-      const open = Boolean(this.state.anchorEl);
-      const carts = Array(localStorage.getItem('cart'))
+  handleSearch = (e) => {
+    
+    if(e.keyCode === 13){
+      console.log("search button submitted");
+      this.setState({submitted:!this.state.submitted})
+    }
+  }
 
-      const sideList = (
-        <div className={classes.list}>
-          <h5>Departments</h5>
-          <List>
-            {this.props.departments && this.props.departments.map((dept) => (
-              <ListItem button key={dept.id}>
-                {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
-                <a href={`/#/departments/${dept.id}`} style={{textDecoration:'none', textTransform:'uppercase'}}>
-                  <ListItemText primary={dept.name} />
-                </a>
-              </ListItem>
-            ))}
+  render(){
+    
+    const { classes } = this.props;
+    const { value, auth } = this.state;
+    const open = Boolean(this.state.anchorEl);
+    const carts = Array(localStorage.getItem('cart'))
+
+    const sideList = (
+      <div className={classes.list}>
+        {/* <h5>Departments</h5> */}
+        <List component="nav"
+        subheader={<ListSubheader component="div">Shop by department</ListSubheader>}
+        className={classes.root}>
+          {this.props.departments && this.props.departments.map((dept) => (
+            <ListItem button key={dept.id}>
+              {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
+              <a href={`/#/departments/${dept.id}`} style={{textDecoration:'none', textTransform:'uppercase'}}>
+                <ListItemText primary={dept.name} />
+              </a>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+        {/* <h5>Categories</h5> */}
+        <List component="nav"
+        subheader={<ListSubheader component="div">Shop by category</ListSubheader>}
+        className={classes.root}>
+          {this.props.categories && this.props.categories.map((category) => (
+            <ListItem button key={category.id}>
+              <ListItemIcon>{category.id % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+              <a href={`/#/categories/${category.id}`} style={{textDecoration:'none', textTransform:'uppercase'}}>
+                <ListItemText primary={category.name} />
+              </a>
+            </ListItem>
+          ))}
+        </List>
+        <List
+        component="nav"
+        subheader={<ListSubheader component="div">Useful Links</ListSubheader>}
+        className={classes.root}
+      >
+        <ListItem button>
+          {/* <Link to="/"> */}
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText inset>
+              <Link to="/" className={classes.Link}>Home</Link>
+            </ListItemText>
+          {/* </Link> */}
+        </ListItem>
+        {/* <ListItem button>
+          <ListItemIcon>
+            <DraftsIcon />
+          </ListItemIcon>
+          <ListItemText inset primary="Drafts" />
+        </ListItem> */}
+        <ListItem button onClick={this.handleAccountOpenClick}>
+          <ListItemIcon>
+            <InboxIcon />
+          </ListItemIcon>
+          <ListItemText inset primary="account details" />
+          {this.state.accountsOpen ? <ExpandLess /> : <ExpandMore />}
+        </ListItem>
+        <Collapse in={this.state.accountsOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem button className={classes.nested}>
+              <ListItemIcon>
+                <StarBorder />
+              </ListItemIcon>
+              <ListItemText inset primary="Starred" />
+            </ListItem>
           </List>
-          <Divider />
-          <h5>Categories</h5>
-          <List>
-            {this.props.categories && this.props.categories.map((category) => (
-              <ListItem button key={category.id}>
-                {/* <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon> */}
-                <a href={`/#/categories/${category.id}`} style={{textDecoration:'none', textTransform:'uppercase'}}>
-                  <ListItemText primary={category.name} />
-                </a>
-              </ListItem>
-            ))}
-          </List>
-        </div>
-      );
+        </Collapse>
+      </List>
+      </div>
+    );
+
+    
+    if(this.state.submitted){
+      return (
+        <Redirect to="/search" ref={this}/>
+      )
+    }
     
       return (
         
@@ -261,7 +348,7 @@ class SearchAppBar extends React.Component {
                   <div
                     tabIndex={0}
                     role="button"
-                    onClick={this.toggleDrawer('left', false)}
+                    // onClick={this.toggleDrawer('left', false)}
                     onKeyDown={this.toggleDrawer('left', false)}
                   >
                     
@@ -270,7 +357,7 @@ class SearchAppBar extends React.Component {
                 </SwipeableDrawer>
               </IconButton>
               <Typography className={classes.title} variant="h6" color="inherit" noWrap>
-                Shope-mate
+                <Link to="/" className={classes.Link}>Shopemate</Link>
               </Typography>
               <div className={classes.grow} >
                 {/* <Tabs value={value} onChange={this.handleChange}>
@@ -289,13 +376,14 @@ class SearchAppBar extends React.Component {
                 <div className={classes.searchIcon}>
                   <SearchIcon />
                 </div>
-                <InputBase
-                  placeholder="Search…"
+                {!this.state.submitted && <InputBase
+                  placeholder="type something, hit enter"
+                  onKeyUp={this.handleSearch}
                   classes={{
                     root: classes.inputRoot,
                     input: classes.inputInput,
                   }}
-                />
+                />}
               </div>
               <a href="/#/shopping-cart">
                 <IconButton aria-label="Cart">
@@ -328,9 +416,13 @@ class SearchAppBar extends React.Component {
                   open={open}
                   onClose={this.handleClose}
                 >
-                  <MenuItem onClick={this.handleProfile}>Profile</MenuItem>
-                  <MenuItem onClick={this.handleAccount}>My account</MenuItem>
-                  <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+                  <MenuItem>
+                    <Link to={`/profile`} className={classes.Link}>Profile</Link>
+                  </MenuItem>
+                  <MenuItem>
+                    <Link to={`/account`} className={classes.Link}>My account</Link>
+                    </MenuItem>
+                  <MenuItem onClick={this.handleLogout} className={classes.Link}>Logout</MenuItem>
                 </Menu>
               </div>
             )}
@@ -375,6 +467,7 @@ class SearchAppBar extends React.Component {
 SearchAppBar.propTypes = {
   classes: PropTypes.object.isRequired,
   getAllCategories : PropTypes.func.isRequired,
+  getAllDepartments : PropTypes.func.isRequired,
   carts : PropTypes.array,
   departments : PropTypes.array,
   categories : PropTypes.array.isRequired
@@ -387,4 +480,4 @@ const mapStateToProps = state => ({
   categories : state.categories.items
 })
 
-export default connect(mapStateToProps, {getAllCategories})(withStyles(styles)(SearchAppBar));
+export default connect(mapStateToProps, {getAllCategories, getAllDepartments})(withStyles(styles)(SearchAppBar));

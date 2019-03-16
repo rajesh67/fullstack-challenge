@@ -82,7 +82,7 @@ const styles = theme => ({
 
 const images = [
   {
-    url: '/static/images/grid-list/breakfast.jpg',
+    url: '/images/category_images/Italian.jpg',
     title: 'Breakfast',
     width: '40%',
   },
@@ -124,7 +124,7 @@ class ButtonBases extends React.Component{
                 <span
                   className={classes.imageSrc}
                   style={{
-                    backgroundImage: `url(${image.url})`,
+                    backgroundImage: `url(/images/dept_images/${image.name}.jpg)`,
                   }}
                 />
                 <span className={classes.imageBackdrop} />

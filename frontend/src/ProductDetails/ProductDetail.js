@@ -223,7 +223,7 @@ class CategoryProducts extends Component {
                     <div className={classes.root}>
                           {this.props.product && <Grid container spacing={40}>
                             {/* <Grid item md={1}></Grid> */}
-                            <Grid item xs={4} style={{textAlign:'center'}}>
+                            <Grid item xs={6}  style={{textAlign:'center'}}>
                                 {/* <Paper className={classes.paper}> */}
                                     {/* Images section */}
                                     <Card className={classes.card}>
@@ -266,7 +266,7 @@ class CategoryProducts extends Component {
                                 {/* </Paper> */}
                             </Grid>
 
-                            <Grid item xs={6}>
+                            <Grid item xs={6} >
                                 {/* <Paper className={classes.paper}> */}
                                     <h1>{this.props.product.name}</h1>    
                                     <h3 style={{fontWeight:'bold'}} color="secondary">$ {this.props.product.price}</h3>

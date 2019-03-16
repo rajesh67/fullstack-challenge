@@ -83,7 +83,7 @@ const styles = theme => ({
 
 const images = [
   {
-    url: '/static/images/grid-list/breakfast.jpg',
+    url: '/images/category_images/French.jpg',
     title: 'Breakfast',
     width: '40%',
   },
@@ -129,13 +129,14 @@ class CategoryButtonBases extends React.Component{
                 focusVisibleClassName={classes.focusVisible}
                 style={{
                   width: '33.33%',
+                 
                 }}
                 // onClick={this.handleClick}
               >
                 <span
                   className={classes.imageSrc}
                   style={{
-                    backgroundImage: `url(${image.url})`,
+                    backgroundImage: `url(/images/category_images/${image.name}.jpg)`,
                   }}
                 />
                 <span className={classes.imageBackdrop} />

@@ -25,7 +25,10 @@
     <title>React App</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-
+    <!-- <script src="https://www.paypalobjects.com/api/checkout.js"> -->
+      <script
+        src="https://www.paypal.com/sdk/js?client-id=AR8fXEL-HwcbzERJ7qoqnnXnszi2LmSG-8-ugm7uzPpyi2xO3QB4DMf4mLhS5fXqcxOR3XyGJUXEEwIt">
+      </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -40,5 +43,26 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script>
+      // paypal.Buttons({
+      //   createOrder: function(data, actions) {
+      //     // Set up the transaction
+      //     return actions.order.create({
+      //       purchase_units: [{
+      //         amount: {
+      //           value: '0.01'
+      //         }
+      //       }]
+      //     });
+      //   }
+      // }).render('#paypal-button-container');
+    </script>
+    <!-- <div id="paypal-button"></div> -->
+
+    <!-- <script src="https://www.paypal.com/sdk/js?client-id=sb"></script> -->
+    
+    <!-- <script>
+        paypal.Buttons().render('#paypal-button');
+    </script> -->
   </body>
 </html>
