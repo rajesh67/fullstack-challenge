@@ -139,13 +139,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-DEFAULT_FROM_EMAIL="order@impactocean.com"
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_HOST_USER = 'apikey'
-EMAIL_HOST_PASSWORD = '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'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

@@ -87,7 +87,7 @@ urlpatterns = [
     url(r'^carts/$', ShoppingCartList.as_view()),
     url(r'^carts/(?P<pk>\d+)/$', ShoppingCartDetails.as_view()),
 
-    url(r'^users/(?P<pk>\d+)$', CustomerBasicInformtion.as_view()),
+    url(r'^users/(?P<pk>\d+)/$', CustomerBasicInformtion.as_view()),
     url(r'^customers/$', CustomerList.as_view()),
     url(r'^customers/(?P<pk>\d+)/$', CustomerDetails.as_view()),
 

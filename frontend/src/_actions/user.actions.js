@@ -72,3 +72,7 @@ export const loginUser = (data) => dispatch => {
     function success(user) { return { type: usersConstants.LOGIN_SUCCESS, payload : user} }
     function failure(errorText) { return { type: usersConstants.LOGIN_FAILURE, payload : errorText } }
 }
+
+export const updateUser = (data) => dispatch =>{
+    console.log("Updating user in the DB");
+}

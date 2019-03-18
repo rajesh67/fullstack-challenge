@@ -196,6 +196,8 @@ class AttributeDetails(generics.RetrieveUpdateAPIView):
 class AttributeValueList(generics.ListCreateAPIView):
     queryset = AttributeValue.objects.all()
     serializer_class = AttributeValueSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ("attribute_id", "attribute__product_id")
 
 class AttributeValueDetails(generics.RetrieveUpdateAPIView):
     queryset = AttributeValue.objects.all()
@@ -249,6 +251,8 @@ class ShoppingCartDetails(generics.RetrieveUpdateDestroyAPIView):
 class CustomerList(generics.ListCreateAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('user', )
 
 class CustomerDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Customer.objects.all()

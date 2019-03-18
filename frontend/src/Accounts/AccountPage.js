@@ -73,32 +73,67 @@ class AccountPage extends Component {
       this.state = {
           auth : false,
           value : 0,
-          shipping_region : "Select"
+          shipping_region : "Select",
+
+          first_name : '',
+          last_name : '',
+          email : '',
+          username : '',
+
+          address_1 : '',
+          address_2 : '',
+          city : '',
+          region : '',
+          postal_code : '',
+          country : '',
+
+          
       };
+  }
+
+  componentDidMount(){
+    const user = JSON.parse(localStorage.getItem('user'));
+    this.setState({
+      first_name : user.user.first_name,
+      last_name : user.user.last_name,
+      email : user.user.email,
+      username : user.user.username
+    })
   }
 
   handleChange = (event,value) => {
     this.setState({value})
   }
 
-  handleSelectChange = name => event => {
-    console.log(name);
-    console.log(event.target.value)
-    this.setState({ [name] : event.target.value });
+  handleInputChange = (e) => {
+    this.setState({[e.target.name]:e.target.value})
+  }
+
+  handleAddressClick = (e) => {
     console.log(this.state);
+  }
+
+  handleSelectChange = name => event => {
+    // console.log(name);
+    // console.log(event.target.value)
+    this.setState({ [name] : event.target.value });
+    // console.log(this.state);
   };
   
   render() {
     const { classes } = this.props
     const { value } = this.state;
-    const user = localStorage.getItem('user');
-    console.log(user.user)
+    const user = JSON.parse(localStorage.getItem('user'));
+    // console.log(user.user)
 
     if(!localStorage.getItem('user')){
         return (
           <Redirect to="/login" />
         )
       }
+
+    // const user = JSON.parse(localStorage.getItem('user'));
+    // console.log(user);
     
     return (
       <CommonLayout style={{marginTop:75}}>
@@ -137,8 +172,10 @@ class AccountPage extends Component {
                                         id="username"
                                         name="username"
                                         label="Username"
+                                        value={this.state.username}
                                         fullWidth
                                         autoComplete="username"
+                                        onChange={this.handleInputChange}
                                     />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -147,6 +184,8 @@ class AccountPage extends Component {
                                         id="first_name"
                                         name="first_name"
                                         label="First name"
+                                        value={this.state.first_name}
+                                        onChange={this.handleInputChange}
                                         fullWidth
                                         autoComplete="first_name"
                                     />
@@ -154,9 +193,11 @@ class AccountPage extends Component {
                                     <Grid item xs={12} sm={6}>
                                     <TextField
                                         required
-                                        id="second_name"
-                                        name="second_name"
-                                        label="Second name"
+                                        id="last_name"
+                                        name="last_name"
+                                        label="Last name"
+                                        value={this.state.last_name}
+                                        onChange={this.handleInputChange}
                                         fullWidth
                                         autoComplete="second_name"
                                     />
@@ -167,6 +208,8 @@ class AccountPage extends Component {
                                         id="email"
                                         name="email"
                                         label="Email address"
+                                        value={this.state.email}
+                                        onChange={this.handleInputChange}
                                         fullWidth
                                         autoComplete="email"
                                     />
@@ -192,38 +235,48 @@ class AccountPage extends Component {
                                     <Grid item xs={12} sm={6}>
                                     <TextField
                                         required
-                                        id="firstName"
-                                        name="firstName"
+                                        id="first_name"
+                                        name="first_name"
                                         label="First name"
+                                        value={this.state.first_name}
+                                        onChange={this.handleInputChange}
                                         fullWidth
-                                        autoComplete="fname"
+                                        autoComplete="first_name"
+                                        disabled
                                     />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                     <TextField
                                         required
-                                        id="lastName"
-                                        name="lastName"
+                                        id="last_name"
+                                        name="last_name"
                                         label="Last name"
+                                        value={this.state.last_name}
+                                        onChange={this.handleInputChange}
                                         fullWidth
-                                        autoComplete="lname"
+                                        autoComplete="last_name"
+                                        disabled
                                     />
                                     </Grid>
                                     <Grid item xs={12}>
                                     <TextField
                                         required
-                                        id="address1"
-                                        name="address1"
+                                        id="address_1"
+                                        name="address_1"
                                         label="Address line 1"
+                                        value={this.state.address_1}
+                                        onChange={this.handleInputChange}
                                         fullWidth
                                         autoComplete="billing address-line1"
                                     />
                                     </Grid>
                                     <Grid item xs={12}>
                                     <TextField
-                                        id="address2"
-                                        name="address2"
+                                        id="address_2"
+                                        name="address_2"
                                         label="Address line 2"
+                                        value={this.state.address_2}
+                                        onChange={this.handleInputChange}
                                         fullWidth
                                         autoComplete="billing address-line2"
                                     />
@@ -234,6 +287,8 @@ class AccountPage extends Component {
                                         id="city"
                                         name="city"
                                         label="City"
+                                        value={this.state.city}
+                                        onChange={this.handleInputChange}
                                         fullWidth
                                         autoComplete="billing address-level2"
                                     />
@@ -244,9 +299,11 @@ class AccountPage extends Component {
                                     <Grid item xs={12} sm={6}>
                                     <TextField
                                         required
-                                        id="zip"
-                                        name="zip"
+                                        id="postal_code"
+                                        name="postal_code"
                                         label="Zip / Postal code"
+                                        value={this.state.postal_code}
+                                        onChange={this.handleInputChange}
                                         fullWidth
                                         autoComplete="billing postal-code"
                                     />
@@ -257,6 +314,8 @@ class AccountPage extends Component {
                                         id="country"
                                         name="country"
                                         label="Country"
+                                        value={this.state.country}
+                                        onChange={this.handleInputChange}
                                         fullWidth
                                         autoComplete="billing country"
                                     />
@@ -296,6 +355,7 @@ class AccountPage extends Component {
                                     fullWidth
                                     variant="contained"
                                     color="primary"
+                                    onClick={this.handleAddressClick}
                                   >
                                     Save changes
                                   </Button>

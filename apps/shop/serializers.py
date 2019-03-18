@@ -121,7 +121,8 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 #Customer's serializer
 
 class CustomerSerializer(serializers.ModelSerializer):
-    shipping_region = ShippingRegionSerializer()
+    # shipping_region = ShippingRegionSerializer()
+    # user  = UserSerializer()
     class Meta:
         model = Customer
         fields = (
@@ -129,6 +130,33 @@ class CustomerSerializer(serializers.ModelSerializer):
                     "city", "region", "postal_code", "country", 
                     "shipping_region", "day_phone", "eve_phone", "mob_phone"
                 )
+    
+    def create(self, validated_data):
+        # shipping_region = validated_data.pop('shipping_region')
+        # user = validated_data.get('user', instance.user)
+        # userModel = User.objects.get(username=user)
+        
+        customer, created = Customer.objects.get_or_create(**validated_data)
+
+        return customer
+    
+    def update(self, instance, validated_data):
+        shipping_region = validated_data.pop('shipping_region')
+        user = validated_data.pop('user')
+
+        instance.address_1 = validated_data.get('address_1', instance.address_1)
+        instance.address_2 = validated_data.get('address_2', instance.address_2)
+        instance.city  = validated_data.get('city', instance.city)
+        instance.region = validated_data.get('region', instance.region)
+        instance.postal_code = validated_data.get('postal_code', instance.postal_code)
+        instance.country = validated_data.get('country', instance.country)
+        instance.day_phone = validated_data.get('day_phone', instance.day_phone)
+        instance.eve_phone = validated_data('eve_phone', instance.eve_phone)
+        instance.mob_phone = validated_data('mob_phone', instance.mob_phone)
+        instance.shipping_region, created = ShippingRegion.objects.get_or_create(name=shipping_region)
+        instance.user, created = User.objects.get_or_create(username=user["username"])
+
+        return instance
 
 #Order Serializer, Order details serializer
 
